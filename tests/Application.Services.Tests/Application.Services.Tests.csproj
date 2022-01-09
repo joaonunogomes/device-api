@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <AssemblyName>DeviceApi.Application.Services.Tests</AssemblyName>
+
+    <RootNamespace>DeviceApi.Application.Services.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CtorMock.Moq" Version="1.0.13" />
+    <PackageReference Include="FluentAssertions" Version="6.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Application\Application.Services\Application.Services.csproj" />
+    <ProjectReference Include="..\..\src\Application\Application.Dto\Application.Dto.csproj" />
+    <ProjectReference Include="..\..\src\Data.Repository\Data.Repository.csproj" />
+  </ItemGroup>
+</Project>

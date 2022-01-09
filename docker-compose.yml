@@ -1,0 +1,11 @@
+version: "3"
+services: 
+    device-api:
+        build: 
+          context: .
+          dockerfile: Dockerfile
+        image: "device-api"
+        ports:
+          - "9199:9199"
+        volumes: 
+          - ./device-api:/logs/device-api
