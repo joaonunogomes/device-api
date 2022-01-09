@@ -1,6 +1,7 @@
 ﻿using CtorMock.Moq;
 using DeviceApi.Application.Dto;
-using DeviceApi.Data.Repository;
+using DeviceApi.Application.Services.Devices;
+using DeviceApi.Data.Repository.Devices;
 using FluentAssertions;
 using Moq;
 using System;

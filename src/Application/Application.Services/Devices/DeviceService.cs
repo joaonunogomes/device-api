@@ -1,10 +1,9 @@
 ﻿using DeviceApi.Application.Dto;
-using DeviceApi.Data.Repository;
+using DeviceApi.Data.Repository.Devices;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DeviceApi.Application.Services
+namespace DeviceApi.Application.Services.Devices
 {
     public class DeviceService : IDeviceService
     {
@@ -15,13 +14,13 @@ namespace DeviceApi.Application.Services
             this.deviceRepository = deviceRepository;
         }
 
-        public async Task<Device> CreateAsync(Device rover)
+        public async Task<Device> CreateAsync(Device device)
         {
-            rover.Id = Guid.NewGuid();
+            device.Id = Guid.NewGuid();
 
-            await this.deviceRepository.AddAsync(rover);
+            await this.deviceRepository.AddAsync(device);
 
-            return rover;
+            return device;
         }
 
         public Task<Device> GetAsync(Guid id)

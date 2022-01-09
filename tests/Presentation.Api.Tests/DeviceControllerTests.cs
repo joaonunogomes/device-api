@@ -1,6 +1,6 @@
 ﻿using CtorMock.Moq;
 using DeviceApi.Application.Dto;
-using DeviceApi.Application.Services;
+using DeviceApi.Application.Services.Devices;
 using DeviceApi.Presentation.Api.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,5 @@
 ﻿using DeviceApi.Application.Dto;
-using DeviceApi.Application.Services;
+using DeviceApi.Application.Services.Devices;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,13 +34,13 @@ namespace DeviceApi.Presentation.Api.Controllers
         {
             try
             {
-                var createdRover = await this.deviceService.CreateAsync(device);
+                var createdDevice = await this.deviceService.CreateAsync(device);
 
                 this.logger.Info($"Creating new device", device);
 
-                return this.CreatedAtAction(nameof(GetAsync), createdRover);
+                return this.CreatedAtAction(nameof(GetAsync), createdDevice);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var errorMessage = "Couldn't create device";
                 this.logger.Error(errorMessage, ex);
@@ -50,9 +50,9 @@ namespace DeviceApi.Presentation.Api.Controllers
         }
 
         /// <summary>
-        /// Get a rover
+        /// Get a device
         /// </summary>
-        /// <param name="id">Universal identifier of the rover.</param>
+        /// <param name="id">Universal identifier of the device.</param>
         [HttpGet]
         [Route("{id}")]
         [Produces("application/json")]
@@ -67,7 +67,7 @@ namespace DeviceApi.Presentation.Api.Controllers
             catch (Exception ex)
             {
                 var errorMessage = "Couldn't get device";
-                this.logger.Error(errorMessage, new { DeviceId = id } , ex);
+                this.logger.Error(errorMessage, new { DeviceId = id }, ex);
 
                 return BadRequest(errorMessage);
             }

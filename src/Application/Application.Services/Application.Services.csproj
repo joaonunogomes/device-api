@@ -5,7 +5,7 @@
     <RootNamespace>DeviceApi.Application.Services</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Data.Repository\Data.Repository.csproj" />
+    <ProjectReference Include="..\..\Data\Data.Repository\Data.Repository.csproj" />
     <ProjectReference Include="..\Application.Dto\Application.Dto.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.CrossCutting\Infrastructure.CrossCutting.csproj" />
   </ItemGroup>
