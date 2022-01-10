@@ -6,13 +6,21 @@ REST API service that supports the management of a device database.
 
 The structure of this project follows Domain Driven Design patterns, devided into several layers, each where each one will sever its own responsability.
 
+## Layers
+
 - Presentation -> responsible by exposing the servise to the clients
 - Application -> Contains Data Tranfer Object that will be retruned to the client and used by the client to do requests to this service
 - Domain -> Contains all business/data models
 - Data -> Contains all database access implementations
 - Infrastructure Crosscutting -> Contaisn helpers, extensions and other tools, that should be accessible by all other projects.
 
+![dependency-layer-diagram](https://github.com/joaonunogomes/device-api/blob/main/documentation/dependency-layer-diagram.png)
+
 # How to run
+
+### Port
+
+This service will listen on port `9199`.
 
 ## With docker
 
