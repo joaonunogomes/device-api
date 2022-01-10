@@ -43,21 +43,11 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync([FromBody] Device device)
         {
-            try
-            {
-                var createdDevice = await this.deviceService.CreateAsync(device);
+            var createdDevice = await this.deviceService.CreateAsync(device);
 
-                this.logger.Info($"Creating new device", device);
+            this.logger.Info($"Creating new device", device);
 
-                return this.CreatedAtAction(nameof(GetAsync), createdDevice);
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't create device";
-                this.logger.Error(errorMessage, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.CreatedAtAction(nameof(GetAsync), createdDevice);
         }
 
         /// <summary>
@@ -71,17 +61,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
-            try
-            {
-                return this.Ok(await this.deviceService.GetAsync(id));
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't get device";
-                this.logger.Error(errorMessage, new { DeviceId = id }, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.Ok(await this.deviceService.GetAsync(id));
         }
 
         /// <summary>
@@ -93,17 +73,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                return this.Ok(await this.deviceService.GetAllAsync());
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't get devices";
-                this.logger.Error(errorMessage, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.Ok(await this.deviceService.GetAllAsync());
         }
 
         /// <summary>
@@ -129,19 +99,9 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync([FromRoute] Guid id, Device device)
         {
-            try
-            {
-                await this.deviceService.UpdateAsync(id, device);
+            await this.deviceService.UpdateAsync(id, device);
 
-                return this.NoContent();
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't update device";
-                this.logger.Error(errorMessage, device, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.NoContent();
         }
     }
 }

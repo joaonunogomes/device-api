@@ -55,10 +55,10 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.PostAsync(deviceMock);
+            Func<Task> act = async () => await this.Subject.PostAsync(deviceMock);
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
             this.deviceServiceMock.Verify(x => x.CreateAsync(deviceMock), Times.Once);
         }
 
@@ -79,7 +79,7 @@ namespace DeviceApi.Presentation.Api.Tests
         }
 
         [Fact]
-        public async Task GetAsync_WhenDeviceServiceThrowsException_ShouldReturnBadRequest()
+        public async Task GetAsync_WhenDeviceServiceThrowsException_ShouldThrowException()
         {
             // Arrange
             this.deviceServiceMock
@@ -87,10 +87,10 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.GetAsync(this.DEVICE_ID);
+            Func<Task> act = async () => await this.Subject.GetAsync(this.DEVICE_ID);
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
             this.deviceServiceMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
         }
 
@@ -111,7 +111,7 @@ namespace DeviceApi.Presentation.Api.Tests
         }
 
         [Fact]
-        public async Task GetAllAsync_WhenDeviceServiceThrowsException_ShouldReturnBadRequest()
+        public async Task GetAllAsync_WhenDeviceServiceThrowsException_ShouldThrowExcception()
         {
             // Arrange
             this.deviceServiceMock
@@ -119,10 +119,11 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.GetAllAsync();
+            Func<Task> act = async () => await this.Subject.GetAllAsync();
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
+
             this.deviceServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
@@ -143,7 +144,7 @@ namespace DeviceApi.Presentation.Api.Tests
         }
 
         [Fact]
-        public async Task PutAsync_WhenDeviceServiceThrowsException_ShouldReturnBadRequest()
+        public async Task PutAsync_WhenDeviceServiceThrowsException_ShouldThrowException()
         {
             // Arrange
             this.deviceServiceMock
@@ -151,10 +152,10 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.PutAsync(this.DEVICE_ID, new Device());
+            Func<Task> act = async () => await this.Subject.PutAsync(this.DEVICE_ID, new Device());
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
             this.deviceServiceMock.Verify(x => x.UpdateAsync(this.DEVICE_ID, It.IsAny<Device>()), Times.Once);
         }
     }

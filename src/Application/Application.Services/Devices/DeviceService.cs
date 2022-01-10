@@ -1,7 +1,9 @@
 ﻿using DeviceApi.Application.Dto;
 using DeviceApi.Data.Repository.Devices;
 using DeviceApi.Infrastructure.CrossCutting;
+using DeviceApi.Infrastructure.CrossCutting.Exceptions;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -45,13 +47,37 @@ namespace DeviceApi.Application.Services.Devices
         {
             if (deviceToUpdate == null)
             {
-                this.logger.Error("Device to update is null");
-                throw new Exception("Bad request");
+                var errorMessage = "Device can't be null";
+                this.logger.Error(errorMessage);
+                throw new ApiErrorException(errorMessage);
             }
 
             deviceToUpdate.Id = id;
 
             await this.deviceRepository.UpdateAsync(x => x.Id == id, MappingProfile.Map<Device, DomainModel.Device>(deviceToUpdate));
+        }
+
+        public async Task PatchAsync(Guid id, JsonPatchDocument<Device> jsonPatchDocument)
+        {
+            if (jsonPatchDocument == null)
+            {
+                var errorMessage = "Json patch document can't be null";
+                this.logger.Error(errorMessage);
+                throw new ApiErrorException(errorMessage);
+            }
+
+            var device = await this.deviceRepository.GetAsync(id);
+
+            if (device == null)
+            {
+                this.logger.Error("Device not found", new { DeviceId = id });
+                throw new NotFoundException();
+            }
+
+            var mappedJsonPatchDocument = MappingProfile.Map<JsonPatchDocument<Device>, JsonPatchDocument<DomainModel.Device>>(jsonPatchDocument);
+            mappedJsonPatchDocument.ApplyTo(device);
+
+            await this.deviceRepository.UpdateAsync(x => x.Id == id, device);
         }
     }
 }

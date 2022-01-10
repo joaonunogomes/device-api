@@ -32,21 +32,11 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync([FromBody] Brand brand)
         {
-            try
-            {
-                var createdBrand = await this.brandService.CreateAsync(brand);
+            var createdBrand = await this.brandService.CreateAsync(brand);
 
-                this.logger.Info($"Creating new brand", brand);
+            this.logger.Info($"Creating new brand", brand);
 
-                return this.CreatedAtAction(nameof(GetAsync), createdBrand);
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't create brand";
-                this.logger.Error(errorMessage, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.CreatedAtAction(nameof(GetAsync), createdBrand);
         }
 
         /// <summary>
@@ -60,17 +50,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
-            try
-            {
-                return this.Ok(await this.brandService.GetAsync(id));
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Couldn't get brand";
-                this.logger.Error(errorMessage, new { BrandId = id }, ex);
-
-                return BadRequest(errorMessage);
-            }
+            return this.Ok(await this.brandService.GetAsync(id));
         }
     }
 }

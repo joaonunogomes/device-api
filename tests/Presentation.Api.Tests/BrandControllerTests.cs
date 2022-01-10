@@ -55,10 +55,10 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.PostAsync(brandMock);
+            Func<Task> act = async () => await this.Subject.PostAsync(brandMock);
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
             this.brandServiceMock.Verify(x => x.CreateAsync(brandMock), Times.Once);
         }
 
@@ -79,7 +79,7 @@ namespace DeviceApi.Presentation.Api.Tests
         }
 
         [Fact]
-        public async Task GetAsync_WhenBrandServiceThrowsException_ShouldReturnBadRequest()
+        public async Task GetAsync_WhenBrandServiceThrowsException_ShouldThrowException()
         {
             // Arrange
             this.brandServiceMock
@@ -87,10 +87,10 @@ namespace DeviceApi.Presentation.Api.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            var act = await this.Subject.GetAsync(this.BRAND_ID);
+            Func<Task> act = async () => await this.Subject.GetAsync(this.BRAND_ID);
 
             // Assert
-            act.Should().BeOfType(typeof(BadRequestObjectResult));
+            await act.Should().ThrowAsync<Exception>();
             this.brandServiceMock.Verify(x => x.GetAsync(this.BRAND_ID), Times.Once);
         }
     }

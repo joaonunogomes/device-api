@@ -1,4 +1,5 @@
 ﻿using DeviceApi.Application.Dto;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,5 +15,7 @@ namespace DeviceApi.Application.Services.Devices
         Task<IEnumerable<Device>> GetAllAsync();
 
         Task UpdateAsync(Guid id, Device deviceToUpdate);
+
+        Task PatchAsync(Guid id, JsonPatchDocument<Device> jsonPatchDocument);
     }
 }

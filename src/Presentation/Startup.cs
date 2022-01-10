@@ -1,6 +1,8 @@
 namespace DeviceApi.Presentation.Api
 {
     using Application.Services;
+    using DeviceApi.Infrastructure.CrossCutting.Configuration;
+    using DeviceApi.Presentation.Api.Middlewares;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,6 @@ namespace DeviceApi.Presentation.Api
     using Microsoft.OpenApi.Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-    using DeviceApi.Infrastructure.CrossCutting.Configuration;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.IO;
@@ -72,6 +73,8 @@ namespace DeviceApi.Presentation.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", appSettings.Swagger.Title);
                 });
             }
+
+            app.UseApiExceptions();
 
             loggerFactory.AddFile(appSettings.Logging.FilePath);
 
