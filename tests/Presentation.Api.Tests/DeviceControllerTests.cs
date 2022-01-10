@@ -191,5 +191,37 @@ namespace DeviceApi.Presentation.Api.Tests
             await act.Should().ThrowAsync<Exception>();
             this.deviceServiceMock.Verify(x => x.PatchAsync(this.DEVICE_ID, It.IsAny<JsonPatchDocument<Device>>()), Times.Once);
         }
+
+        [Fact]
+        public async Task DeleteAsync_DefaultBehaviour_ShouldDeleteDeviceAndReturnNoContent()
+        {
+            // Arrange
+            this.deviceServiceMock
+                .Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var act = await this.Subject.DeleteAsync(this.DEVICE_ID);
+
+            // Assert
+            act.Should().BeOfType(typeof(NoContentResult));
+            this.deviceServiceMock.Verify(x => x.DeleteAsync(this.DEVICE_ID), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_WhenDeviceServiceThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            this.deviceServiceMock
+                .Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.DeleteAsync(this.DEVICE_ID);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceServiceMock.Verify(x => x.DeleteAsync(this.DEVICE_ID), Times.Once);
+        }
     }
 }

@@ -17,5 +17,7 @@ namespace DeviceApi.Application.Services.Devices
         Task UpdateAsync(Guid id, Device deviceToUpdate);
 
         Task PatchAsync(Guid id, JsonPatchDocument<Device> jsonPatchDocument);
+
+        Task DeleteAsync(Guid id);
     }
 }

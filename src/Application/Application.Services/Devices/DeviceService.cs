@@ -80,6 +80,13 @@ namespace DeviceApi.Application.Services.Devices
             await this.deviceRepository.UpdateAsync(x => x.Id == id, device);
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            await TryGetDevice(id);
+
+            await this.deviceRepository.DeleteAsync(id);
+        }
+
         private async Task<DomainModel.Device> TryGetDevice(Guid id)
         {
             var device = await this.deviceRepository.GetAsync(id);

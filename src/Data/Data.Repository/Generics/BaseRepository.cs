@@ -43,11 +43,6 @@ namespace DeviceApi.Data.Repository.Generics
             return (await this.collection.FindAsync(query))?.ToList();
         }
 
-        public virtual async Task DeleteOneAsync(Expression<Func<TEntity, bool>> query)
-        {
-            await this.collection.DeleteOneAsync(query, default);
-        }
-
         public virtual async Task DeleteAsync(Guid id)
         {
             await this.collection.DeleteOneAsync(Builders<TEntity>.Filter.Eq("_id", id));

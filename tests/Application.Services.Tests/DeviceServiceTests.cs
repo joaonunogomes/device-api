@@ -379,5 +379,63 @@ namespace DeviceApi.Application.Services.Tests
                 It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
                 It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID && x.Name == newName)), Times.Once);
         }
+
+        [Fact]
+        public async Task DeleteAsync_DefaultBehaviour_ShouldDeleteDevice()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(new DomainModel.Device());
+
+            this.deviceRepositoryMock
+               .Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+               .Returns(Task.CompletedTask);
+
+            // Act
+            await this.Subject.DeleteAsync(this.DEVICE_ID);
+
+            // Assert
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.DeleteAsync(this.DEVICE_ID), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_WhenDeviceDoesNotexist_ShouldThrowNotFoundException()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(null as DomainModel.Device);
+
+            // Act
+            Func<Task> act = async () => await this.Subject.DeleteAsync(this.DEVICE_ID);
+
+            // Assert
+            await act.Should().ThrowAsync<NotFoundException>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.DeleteAsync(this.DEVICE_ID), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_WhenRepositoryThrowException_ShouldThrowException()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(new DomainModel.Device());
+
+            this.deviceRepositoryMock
+               .Setup(x => x.DeleteAsync(It.IsAny<Guid>()))
+               .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.DeleteAsync(this.DEVICE_ID);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.DeleteAsync(this.DEVICE_ID), Times.Once);
+        }
     }
 }

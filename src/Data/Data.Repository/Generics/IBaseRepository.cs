@@ -15,8 +15,6 @@
 
         Task<IEnumerable<TEntity>> GetManyAsync(Expression<Func<TEntity, bool>> query);
         
-        Task DeleteOneAsync(Expression<Func<TEntity, bool>> query);
-
         Task DeleteAsync(Guid id);
 
         Task UpdateAsync(Expression<Func<TEntity, bool>> query, TEntity obj);

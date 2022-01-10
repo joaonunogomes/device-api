@@ -122,7 +122,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         /// </remarks>
         /// <param name="id">Universal identifier of the device.</param>
         /// <param name="jsonPatchDocument">>Patch document to update device.</param>
-        [HttpPut]
+        [HttpPatch]
         [Route("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -130,6 +130,22 @@ namespace DeviceApi.Presentation.Api.Controllers
         public async Task<IActionResult> PatchAsync([FromRoute] Guid id, JsonPatchDocument<Device> jsonPatchDocument)
         {
             await this.deviceService.PatchAsync(id, jsonPatchDocument);
+
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// Delete device
+        /// </summary>
+        /// <param name="id">Universal identifier of the device.</param>
+        [HttpDelete]
+        [Route("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
+        {
+            await this.deviceService.DeleteAsync(id);
 
             return this.NoContent();
         }
