@@ -1,6 +1,7 @@
 namespace DeviceApi.Presentation.Api
 {
     using Application.Services;
+    using DeviceApi.Data.Repository;
     using DeviceApi.Infrastructure.CrossCutting.Configuration;
     using DeviceApi.Presentation.Api.Middlewares;
     using Microsoft.AspNetCore.Builder;
@@ -47,7 +48,7 @@ namespace DeviceApi.Presentation.Api
 
             services.AddLogging();
 
-            ConfigureDependencies(services);
+            ConfigureDependencies(services, appSettings);
 
             ConfigureSwagger(services, appSettings);
         }
@@ -104,10 +105,11 @@ namespace DeviceApi.Presentation.Api
                 .First();
         }
 
-        private static void ConfigureDependencies(IServiceCollection services)
+        private static void ConfigureDependencies(IServiceCollection services, ApplicationSettings appSettings)
         {
             services
-                .AddApplication();
+                .AddApplication()
+                .AddRepository(appSettings.MongoSettings);
         }
 
         private static void ConfigureSwagger(IServiceCollection services, ApplicationSettings appSettings)

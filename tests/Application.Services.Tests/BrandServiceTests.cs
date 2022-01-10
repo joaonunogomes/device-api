@@ -39,7 +39,8 @@ namespace DeviceApi.Application.Services.Tests
             act.Should().NotBeNull();
             act.Should().BeOfType(typeof(Brand));
             act.Id.Should().NotBeEmpty();
-            this.brandRepositoryMock.Verify(x => x.AddAsync(It.IsAny<DomainModel.Brand>()), Times.Once);
+            this.brandRepositoryMock.Verify(x => x.AddAsync(It.Is<DomainModel.Brand>(x => x.Id != Guid.Empty && x.CreationDate != default(DateTime))), Times.Once);
+
         }
 
         [Fact]

@@ -49,7 +49,7 @@ namespace DeviceApi.Presentation.Api.Controllers
 
             this.logger.Info($"Creating new device", device);
 
-            return this.CreatedAtAction(nameof(GetAsync), createdDevice);
+            return this.CreatedAtAction("Get", new { id = createdDevice.Id }, createdDevice);
         }
 
         /// <summary>

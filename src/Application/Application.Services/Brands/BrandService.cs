@@ -19,6 +19,7 @@ namespace DeviceApi.Application.Services.Brands
         public async Task<Brand> CreateAsync(Brand brand)
         {
             brand.Id = Guid.NewGuid();
+            brand.CreationDate = DateTime.UtcNow;
 
             await this.brandRepository.AddAsync(MappingProfile.Map<Brand, DomainModel.Brand>(brand));
 
