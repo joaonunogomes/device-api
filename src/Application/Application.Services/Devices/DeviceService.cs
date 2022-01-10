@@ -4,6 +4,7 @@ using DeviceApi.Infrastructure.CrossCutting;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainModel = DeviceApi.Domain.Model;
 
@@ -32,6 +33,12 @@ namespace DeviceApi.Application.Services.Devices
         public async Task<Device> GetAsync(Guid id)
         {
             return MappingProfile.Map<DomainModel.Device, Device>(await this.deviceRepository.GetAsync(id));
+        }
+
+        public async Task<IEnumerable<Device>> GetAllAsync()
+        {
+            var deviceList = MappingProfile.Map<IEnumerable<DomainModel.Device>, IEnumerable<Device>>(await this.deviceRepository.GetManyAsync(x => true));
+            return deviceList ?? new List<Device>();
         }
 
         public async Task UpdateAsync(Guid id, Device deviceToUpdate)

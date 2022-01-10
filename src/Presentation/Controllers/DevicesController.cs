@@ -85,6 +85,28 @@ namespace DeviceApi.Presentation.Api.Controllers
         }
 
         /// <summary>
+        /// Get all devices
+        /// </summary>
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Device))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            try
+            {
+                return this.Ok(await this.deviceService.GetAllAsync());
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Couldn't get devices";
+                this.logger.Error(errorMessage, ex);
+
+                return BadRequest(errorMessage);
+            }
+        }
+
+        /// <summary>
         /// Update a device
         /// </summary>
         /// <remarks>

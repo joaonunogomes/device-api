@@ -1,5 +1,6 @@
 ﻿using DeviceApi.Application.Dto;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DeviceApi.Application.Services.Devices
@@ -9,6 +10,8 @@ namespace DeviceApi.Application.Services.Devices
         Task<Device> CreateAsync(Device device);
 
         Task<Device> GetAsync(Guid id);
+
+        Task<IEnumerable<Device>> GetAllAsync();
 
         Task UpdateAsync(Guid id, Device deviceToUpdate);
     }

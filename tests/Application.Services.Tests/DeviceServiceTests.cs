@@ -5,6 +5,7 @@ using DeviceApi.Data.Repository.Devices;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using DomainModel = DeviceApi.Domain.Model;
@@ -60,7 +61,7 @@ namespace DeviceApi.Application.Services.Tests
         }
 
         [Fact]
-        public async Task GetAsync_DefaultBehaviour_ShouldReturnCreatedDevice()
+        public async Task GetAsync_DefaultBehaviour_ShouldReturnDevice()
         {
             // Arrange
             var device = new DomainModel.Device();
@@ -92,6 +93,58 @@ namespace DeviceApi.Application.Services.Tests
             // Assert
             await act.Should().ThrowAsync<Exception>();
             this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_DefaultBehaviour_ShouldReturnDeviceList()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>()))
+                .ReturnsAsync(new List<DomainModel.Device> { new DomainModel.Device() });
+
+            // Act
+            var act = await this.Subject.GetAllAsync();
+
+            // Assert
+            act.Should().NotBeNull();
+            act.Should().NotBeEmpty();
+            act.Should().BeOfType(typeof(List<Device>));
+            this.deviceRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(x => true)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_WhenRepositoryReturnsNull_ShouldReturnEmptyList()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>()))
+                .ReturnsAsync(null as List<DomainModel.Device>);
+
+            // Act
+            var act = await this.Subject.GetAllAsync();
+
+            // Assert
+            act.Should().NotBeNull();
+            act.Should().BeEmpty();
+            act.Should().BeOfType(typeof(List<Device>));
+            this.deviceRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(x => true)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>()))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.GetAllAsync();
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(x => true)), Times.Once);
         }
 
         [Fact]
