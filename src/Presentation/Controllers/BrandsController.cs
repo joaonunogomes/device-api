@@ -37,7 +37,7 @@ namespace DeviceApi.Presentation.Api.Controllers
 
             this.logger.Info($"Creating new brand", brand);
 
-            return this.CreatedAtAction("Get", new { id = createdBrand.Id }, createdBrand);
+            return this.CreatedAtAction("GetAll", createdBrand);
         }
 
         /// <summary>
