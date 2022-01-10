@@ -1,5 +1,5 @@
 ﻿using DeviceApi.Application.Dto;
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DeviceApi.Application.Services.Brands
@@ -8,6 +8,6 @@ namespace DeviceApi.Application.Services.Brands
     {
         Task<Brand> CreateAsync(Brand brand);
 
-        Task<Brand> GetAsync(Guid id);
+        Task<IEnumerable<Brand>> GetAllAsync();
     }
 }

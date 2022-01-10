@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DeviceApi.Presentation.Api.Controllers
@@ -40,17 +41,15 @@ namespace DeviceApi.Presentation.Api.Controllers
         }
 
         /// <summary>
-        /// Get a brand
+        /// Get all brands
         /// </summary>
-        /// <param name="id">Universal identifier of the brand.</param>
         [HttpGet]
-        [Route("{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Brand))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Brand>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+        public async Task<IActionResult> GetAllAsync()
         {
-            return this.Ok(await this.brandService.GetAsync(id));
+            return this.Ok(await this.brandService.GetAllAsync());
         }
     }
 }

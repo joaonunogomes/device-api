@@ -5,6 +5,7 @@ using DeviceApi.Data.Repository.Brands;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using DomainModel = DeviceApi.Domain.Model;
@@ -62,38 +63,55 @@ namespace DeviceApi.Application.Services.Tests
         }
 
         [Fact]
-        public async Task GetAsync_DefaultBehaviour_ShouldReturnCreatedBrand()
+        public async Task GetAllAsync_DefaultBehaviour_ShouldReturnBrandList()
         {
             // Arrange
-            var brand = new DomainModel.Brand();
-
             this.brandRepositoryMock
-                .Setup(x => x.GetAsync(this.BRAND_ID))
-                .ReturnsAsync(brand);
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>()))
+                .ReturnsAsync(new List<DomainModel.Brand> { new DomainModel.Brand() });
 
             // Act
-            var act = await this.Subject.GetAsync(this.BRAND_ID);
+            var act = await this.Subject.GetAllAsync();
 
             // Assert
             act.Should().NotBeNull();
-            act.Should().BeOfType(typeof(Brand));
-            this.brandRepositoryMock.Verify(x => x.GetAsync(this.BRAND_ID), Times.Once);
+            act.Should().NotBeEmpty();
+            act.Should().BeOfType(typeof(List<Brand>));
+            this.brandRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>(x => true)), Times.Once);
         }
 
         [Fact]
-        public async Task GetAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        public async Task GetAllAsync_WhenRepositoryReturnsNull_ShouldReturnEmptyList()
         {
             // Arrange
             this.brandRepositoryMock
-                .Setup(x => x.GetAsync(this.BRAND_ID))
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>()))
+                .ReturnsAsync(null as List<DomainModel.Brand>);
+
+            // Act
+            var act = await this.Subject.GetAllAsync();
+
+            // Assert
+            act.Should().NotBeNull();
+            act.Should().BeEmpty();
+            act.Should().BeOfType(typeof(List<Brand>));
+            this.brandRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>(x => true)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            this.brandRepositoryMock
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>()))
                 .ThrowsAsync(new Exception());
 
             // Act
-            Func<Task> act = async () => await this.Subject.GetAsync(this.BRAND_ID);
+            Func<Task> act = async () => await this.Subject.GetAllAsync();
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
-            this.brandRepositoryMock.Verify(x => x.GetAsync(this.BRAND_ID), Times.Once);
+            this.brandRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Brand, bool>>>(x => true)), Times.Once);
         }
     }
 }

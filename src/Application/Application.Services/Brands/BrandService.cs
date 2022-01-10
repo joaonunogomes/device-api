@@ -2,6 +2,7 @@
 using DeviceApi.Data.Repository.Brands;
 using DeviceApi.Infrastructure.CrossCutting;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainModel = DeviceApi.Domain.Model;
 
@@ -26,9 +27,11 @@ namespace DeviceApi.Application.Services.Brands
             return brand;
         }
 
-        public async Task<Brand> GetAsync(Guid id)
+        public async Task<IEnumerable<Brand>> GetAllAsync()
         {
-            return MappingProfile.Map<DomainModel.Brand, Brand>(await this.brandRepository.GetAsync(id));
+            var brandList = MappingProfile.Map<IEnumerable<DomainModel.Brand>, IEnumerable<Brand>>(await this.brandRepository.GetManyAsync(x => true));
+
+            return brandList ?? new List<Brand>();
         }
     }
 }

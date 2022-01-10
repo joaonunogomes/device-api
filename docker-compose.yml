@@ -2,7 +2,6 @@ version: "3"
 services: 
     mongodb:
       image : mongo:5.0.5
-      container_name: mongodb
       volumes:
       - ./mongo_data:/data/db
       ports:
@@ -11,6 +10,8 @@ services:
         build: 
           context: .
           dockerfile: Dockerfile
+        environment:
+          - MongoSettings__MongoConnectionString=mongodb://mongodb
         image: "device-api"
         ports:
           - "9199:9199"

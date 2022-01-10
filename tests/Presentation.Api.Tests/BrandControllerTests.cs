@@ -1,6 +1,5 @@
 ﻿using CtorMock.Moq;
 using DeviceApi.Application.Dto;
-using DeviceApi.Application.Services;
 using DeviceApi.Application.Services.Brands;
 using DeviceApi.Presentation.Api.Controllers;
 using FluentAssertions;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -63,35 +63,36 @@ namespace DeviceApi.Presentation.Api.Tests
         }
 
         [Fact]
-        public async Task GetAsync_DefaultBehaviour_ShouldReturnDevice()
+        public async Task GetAllAsync_DefaultBehaviour_ShouldReturnDeviceList()
         {
             // Arrange
             this.brandServiceMock
-                .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new Brand { Id = this.BRAND_ID });
+                .Setup(x => x.GetAllAsync())
+                .ReturnsAsync(new List<Brand>());
 
             // Act
-            var act = await this.Subject.GetAsync(this.BRAND_ID);
+            var act = await this.Subject.GetAllAsync();
 
             // Assert
             act.Should().BeOfType(typeof(OkObjectResult));
-            this.brandServiceMock.Verify(x => x.GetAsync(this.BRAND_ID), Times.Once);
+            this.brandServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
         [Fact]
-        public async Task GetAsync_WhenBrandServiceThrowsException_ShouldThrowException()
+        public async Task GetAllAsync_WhenDeviceServiceThrowsException_ShouldThrowExcception()
         {
             // Arrange
             this.brandServiceMock
-                .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAllAsync())
                 .ThrowsAsync(new Exception());
 
             // Act
-            Func<Task> act = async () => await this.Subject.GetAsync(this.BRAND_ID);
+            Func<Task> act = async () => await this.Subject.GetAllAsync();
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
-            this.brandServiceMock.Verify(x => x.GetAsync(this.BRAND_ID), Times.Once);
+
+            this.brandServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
     }
 }
