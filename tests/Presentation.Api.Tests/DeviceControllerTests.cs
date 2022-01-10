@@ -3,6 +3,7 @@ using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Devices;
 using DeviceApi.Presentation.Api.Controllers;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -157,6 +158,38 @@ namespace DeviceApi.Presentation.Api.Tests
             // Assert
             await act.Should().ThrowAsync<Exception>();
             this.deviceServiceMock.Verify(x => x.UpdateAsync(this.DEVICE_ID, It.IsAny<Device>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchAsync_DefaultBehaviour_ShouldUpdateDeviceAndReturnNoContent()
+        {
+            // Arrange
+            this.deviceServiceMock
+                .Setup(x => x.PatchAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<Device>>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var act = await this.Subject.PatchAsync(this.DEVICE_ID, new JsonPatchDocument<Device>());
+
+            // Assert
+            act.Should().BeOfType(typeof(NoContentResult));
+            this.deviceServiceMock.Verify(x => x.PatchAsync(this.DEVICE_ID, It.IsAny<JsonPatchDocument<Device>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchAsync_WhenDeviceServiceThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            this.deviceServiceMock
+                .Setup(x => x.PatchAsync(It.IsAny<Guid>(), It.IsAny<JsonPatchDocument<Device>>()))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.PatchAsync(this.DEVICE_ID, new JsonPatchDocument<Device>());
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceServiceMock.Verify(x => x.PatchAsync(this.DEVICE_ID, It.IsAny<JsonPatchDocument<Device>>()), Times.Once);
         }
     }
 }

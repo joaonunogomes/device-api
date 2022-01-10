@@ -2,7 +2,9 @@
 using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Devices;
 using DeviceApi.Data.Repository.Devices;
+using DeviceApi.Infrastructure.CrossCutting.Exceptions;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace DeviceApi.Application.Services.Tests
             act.Should().NotBeNull();
             act.Should().BeOfType(typeof(Device));
             act.Id.Should().NotBeEmpty();
-            this.deviceRepositoryMock.Verify(x => x.AddAsync(It.IsAny<DomainModel.Device>()), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.AddAsync(It.Is<DomainModel.Device>(x => x.Id != Guid.Empty && x.CreationDate != default(DateTime))), Times.Once);
         }
 
         [Fact]
@@ -151,31 +153,80 @@ namespace DeviceApi.Application.Services.Tests
         public async Task UpdateAsync_DefaultBehaviour_ShouldUpdateDevice()
         {
             // Arrange
-            var device = new Device();
+            var deviceToUpdate = new Device 
+            { 
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow.AddDays(10),
+                Name = "IPhone 20",
+                BrandId = Guid.NewGuid()
+            };
+
+            var deviceMock = new DomainModel.Device
+            {
+                Id = this.DEVICE_ID,
+                BrandId = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Name = "IPhon e 2 0"
+            };
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(deviceMock);
 
             this.deviceRepositoryMock
                 .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
                 .Returns(Task.CompletedTask);
 
             // Act
-            await this.Subject.UpdateAsync(this.DEVICE_ID, device);
+            await this.Subject.UpdateAsync(this.DEVICE_ID, deviceToUpdate);
 
             // Assert
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
             this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
                 It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID)), Times.Once);
         }
 
         [Fact]
-        public async Task UpdateAsync_WhenDeviceIsNull_ShouldThrowException()
+        public async Task UpdateAsync_WhenDeviceToUpdateIsNull_ShouldThrowException()
         {
-            // Arrange
-
             // Act
             Func<Task> act = async () => await this.Subject.UpdateAsync(this.DEVICE_ID, null);
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Never);
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.IsAny<DomainModel.Device>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WhenDeviceDoesNotExist_ShouldThrowNotFoundException()
+        {
+            // Arrange
+            var deviceToUpdate = new Device
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow.AddDays(10),
+                Name = "IPhone 20",
+                BrandId = Guid.NewGuid()
+            };
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(null as DomainModel.Device);
+
+            this.deviceRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            Func<Task> act = async () => await this.Subject.UpdateAsync(this.DEVICE_ID, deviceToUpdate);
+
+            // Assert
+            await act.Should().ThrowAsync<NotFoundException>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
             this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
                 It.IsAny<DomainModel.Device>()), Times.Never);
@@ -187,6 +238,18 @@ namespace DeviceApi.Application.Services.Tests
             // Arrange
             var device = new Device();
 
+            var deviceMock = new DomainModel.Device
+            {
+                Id = this.DEVICE_ID,
+                BrandId = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Name = "IPhon e 2 0"
+            };
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(deviceMock);
+
             this.deviceRepositoryMock
                 .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
                 .ThrowsAsync(new Exception());
@@ -196,9 +259,125 @@ namespace DeviceApi.Application.Services.Tests
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
             this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
                 It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
                 It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID)), Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchAsync_DefaultBehaviour_ShouldUpdateDevicePropreties()
+        {
+            // Arrange
+            var newName = "IPhone 20";
+            var jsonPatchDocument = new JsonPatchDocument<Device>();
+            jsonPatchDocument.Operations.Add(new Microsoft.AspNetCore.JsonPatch.Operations.Operation<Device>
+            {
+                op = "replace",
+                path = "name",
+                value = newName
+            });
+
+            var deviceMock = new DomainModel.Device
+            {
+                Id = this.DEVICE_ID,
+                BrandId = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Name = "IPhon e 2 0"
+            };
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(deviceMock);
+
+            this.deviceRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            await this.Subject.PatchAsync(this.DEVICE_ID, jsonPatchDocument);
+
+            // Assert
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID && x.Name == newName)), Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchAsync_WhenJsonPatchDocumentIsNull_ShouldThrowApiErrorException()
+        {
+            // Arrange
+            var jsonPatchDocument = null as JsonPatchDocument<Device>;
+            
+            // Act
+            Func<Task> act = async () => await this.Subject.PatchAsync(this.DEVICE_ID, jsonPatchDocument);
+
+            // Assert
+            await act.Should().ThrowAsync<ApiErrorException>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Never);
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task PatchAsync_WhenDeviceDoesNotExists_ShouldThrowNotFoundException()
+        {
+            // Arrange
+            var jsonPatchDocument = new JsonPatchDocument<Device>();
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(null as DomainModel.Device);
+
+            // Act
+            Func<Task> act = async () => await this.Subject.PatchAsync(this.DEVICE_ID, jsonPatchDocument);
+
+            // Assert
+            await act.Should().ThrowAsync<ApiErrorException>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task PatchAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            var newName = "IPhone 20";
+            var jsonPatchDocument = new JsonPatchDocument<Device>();
+            jsonPatchDocument.Operations.Add(new Microsoft.AspNetCore.JsonPatch.Operations.Operation<Device>
+            {
+                op = "replace",
+                path = "name",
+                value = newName
+            });
+
+            var deviceMock = new DomainModel.Device
+            {
+                Id = this.DEVICE_ID,
+                BrandId = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Name = "IPhon e 2 0"
+            };
+
+            this.deviceRepositoryMock
+                   .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+                   .ReturnsAsync(deviceMock);
+
+            this.deviceRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.PatchAsync(this.DEVICE_ID, jsonPatchDocument);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID && x.Name == newName)), Times.Once);
         }
     }
 }

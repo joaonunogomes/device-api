@@ -10,6 +10,7 @@ namespace DeviceApi.Application.Dto
 
         public string Name { get; set; }
 
+        [ReadOnly(true)]
         public DateTime CreationDate { get; set; }
     }
 }

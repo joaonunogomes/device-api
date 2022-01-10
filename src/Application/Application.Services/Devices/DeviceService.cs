@@ -25,11 +25,14 @@ namespace DeviceApi.Application.Services.Devices
 
         public async Task<Device> CreateAsync(Device device)
         {
-            device.Id = Guid.NewGuid();
+            var mappedDevice = MappingProfile.Map<Device, DomainModel.Device>(device);
 
-            await this.deviceRepository.AddAsync(MappingProfile.Map<Device, DomainModel.Device>(device));
+            mappedDevice.Id = Guid.NewGuid();
+            mappedDevice.CreationDate = DateTime.UtcNow;
 
-            return device;
+            await this.deviceRepository.AddAsync(mappedDevice);
+
+            return MappingProfile.Map<DomainModel.Device, Device>(mappedDevice);
         }
 
         public async Task<Device> GetAsync(Guid id)
@@ -52,9 +55,12 @@ namespace DeviceApi.Application.Services.Devices
                 throw new ApiErrorException(errorMessage);
             }
 
-            deviceToUpdate.Id = id;
+            var device = await TryGetDevice(id);
 
-            await this.deviceRepository.UpdateAsync(x => x.Id == id, MappingProfile.Map<Device, DomainModel.Device>(deviceToUpdate));
+            device.Name = deviceToUpdate.Name;
+            device.BrandId = deviceToUpdate.BrandId;
+
+            await this.deviceRepository.UpdateAsync(x => x.Id == id, device);
         }
 
         public async Task PatchAsync(Guid id, JsonPatchDocument<Device> jsonPatchDocument)
@@ -66,6 +72,16 @@ namespace DeviceApi.Application.Services.Devices
                 throw new ApiErrorException(errorMessage);
             }
 
+            var device = await TryGetDevice(id);
+
+            var mappedJsonPatchDocument = MappingProfile.Map<JsonPatchDocument<Device>, JsonPatchDocument<DomainModel.Device>>(jsonPatchDocument);
+            mappedJsonPatchDocument.ApplyTo(device);
+
+            await this.deviceRepository.UpdateAsync(x => x.Id == id, device);
+        }
+
+        private async Task<DomainModel.Device> TryGetDevice(Guid id)
+        {
             var device = await this.deviceRepository.GetAsync(id);
 
             if (device == null)
@@ -74,10 +90,7 @@ namespace DeviceApi.Application.Services.Devices
                 throw new NotFoundException();
             }
 
-            var mappedJsonPatchDocument = MappingProfile.Map<JsonPatchDocument<Device>, JsonPatchDocument<DomainModel.Device>>(jsonPatchDocument);
-            mappedJsonPatchDocument.ApplyTo(device);
-
-            await this.deviceRepository.UpdateAsync(x => x.Id == id, device);
+            return device;
         }
     }
 }

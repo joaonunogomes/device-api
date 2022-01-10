@@ -2,9 +2,11 @@
 using DeviceApi.Application.Services.Devices;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DeviceApi.Presentation.Api.Controllers
@@ -69,7 +71,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         /// </summary>
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Device))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Device>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -95,11 +97,39 @@ namespace DeviceApi.Presentation.Api.Controllers
         [HttpPut]
         [Route("{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Device))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync([FromRoute] Guid id, Device device)
         {
             await this.deviceService.UpdateAsync(id, device);
+
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// Update only some device properties
+        /// </summary>
+        /// <remarks>
+        /// __________________________________________________________
+        /// <example>
+        /// Sample request:
+        ///
+        /// [
+        ///     { "op": "replace", "path": "/name", "value": "New Name" },
+        ///     { "op": "replace", "path": "/brandId", "value": "789e06e6-a983-49c0-9ccd-bada5636fa4d" }
+        /// ]
+        /// </example>
+        /// </remarks>
+        /// <param name="id">Universal identifier of the device.</param>
+        /// <param name="jsonPatchDocument">>Patch document to update device.</param>
+        [HttpPut]
+        [Route("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PatchAsync([FromRoute] Guid id, JsonPatchDocument<Device> jsonPatchDocument)
+        {
+            await this.deviceService.PatchAsync(id, jsonPatchDocument);
 
             return this.NoContent();
         }
