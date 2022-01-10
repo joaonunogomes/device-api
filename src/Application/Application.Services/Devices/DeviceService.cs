@@ -1,7 +1,9 @@
 ﻿using DeviceApi.Application.Dto;
 using DeviceApi.Data.Repository.Devices;
+using DeviceApi.Infrastructure.CrossCutting;
 using System;
 using System.Threading.Tasks;
+using DomainModel = DeviceApi.Domain.Model;
 
 namespace DeviceApi.Application.Services.Devices
 {
@@ -18,14 +20,14 @@ namespace DeviceApi.Application.Services.Devices
         {
             device.Id = Guid.NewGuid();
 
-            await this.deviceRepository.AddAsync(device);
+            await this.deviceRepository.AddAsync(MappingProfile.Map<Device, DomainModel.Device>(device));
 
             return device;
         }
 
-        public Task<Device> GetAsync(Guid id)
+        public async Task<Device> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return MappingProfile.Map<DomainModel.Device, Device>(await this.deviceRepository.GetAsync(id));
         }
     }
 }

@@ -24,5 +24,6 @@
     <ProjectReference Include="..\..\src\Application\Application.Services\Application.Services.csproj" />
     <ProjectReference Include="..\..\src\Application\Application.Dto\Application.Dto.csproj" />
     <ProjectReference Include="..\..\src\Data\Data.Repository\Data.Repository.csproj" />
+    <ProjectReference Include="..\..\src\Domain\Domain.Model\Domain.Model.csproj" />
   </ItemGroup>
 </Project>

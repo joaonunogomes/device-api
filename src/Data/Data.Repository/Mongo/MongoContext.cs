@@ -1,11 +1,10 @@
 namespace DeviceApi.Data.Repository.Mongo
 {
+    using MongoDB.Driver;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
-    using MongoDB.Driver;
 
     public class MongoContext : IMongoContext
     {

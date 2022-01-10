@@ -1,4 +1,4 @@
-﻿using DeviceApi.Application.Dto;
+﻿using DeviceApi.Domain.Model;
 
 namespace DeviceApi.Data.Repository.Brands
 {

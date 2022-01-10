@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Data\Data.Repository\Data.Repository.csproj" />
+    <ProjectReference Include="..\..\Domain\Domain.Model\Domain.Model.csproj" />
     <ProjectReference Include="..\Application.Dto\Application.Dto.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.CrossCutting\Infrastructure.CrossCutting.csproj" />
   </ItemGroup>

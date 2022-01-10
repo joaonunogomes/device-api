@@ -7,13 +7,14 @@ using Moq;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-
+using DomainModel = DeviceApi.Domain.Model;
 
 namespace DeviceApi.Application.Services.Tests
 {
     public class DeviceServiceTests : MockBase<DeviceService>
     {
         private readonly Mock<IDeviceRepository> deviceRepositoryMock;
+        private readonly Guid DEVICE_ID = Guid.NewGuid();
 
         public DeviceServiceTests()
         {
@@ -27,7 +28,7 @@ namespace DeviceApi.Application.Services.Tests
             var device = new Device();
 
             this.deviceRepositoryMock
-                .Setup(x => x.AddAsync(It.IsAny<Device>()))
+                .Setup(x => x.AddAsync(It.IsAny<DomainModel.Device>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -37,7 +38,7 @@ namespace DeviceApi.Application.Services.Tests
             act.Should().NotBeNull();
             act.Should().BeOfType(typeof(Device));
             act.Id.Should().NotBeEmpty();
-            this.deviceRepositoryMock.Verify(x => x.AddAsync(device), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.AddAsync(It.IsAny<DomainModel.Device>()), Times.Once);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace DeviceApi.Application.Services.Tests
             var device = new Device();
 
             this.deviceRepositoryMock
-                .Setup(x => x.AddAsync(It.IsAny<Device>()))
+                .Setup(x => x.AddAsync(It.IsAny<DomainModel.Device>()))
                 .ThrowsAsync(new Exception());
 
             // Act
@@ -55,7 +56,42 @@ namespace DeviceApi.Application.Services.Tests
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
-            this.deviceRepositoryMock.Verify(x => x.AddAsync(device), Times.Once);
+            this.deviceRepositoryMock.Verify(x => x.AddAsync(It.IsAny<DomainModel.Device>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAsync_DefaultBehaviour_ShouldReturnCreatedDevice()
+        {
+            // Arrange
+            var device = new DomainModel.Device();
+
+            this.deviceRepositoryMock
+                .Setup(x => x.GetAsync(this.DEVICE_ID))
+                .ReturnsAsync(device);
+
+            // Act
+            var act = await this.Subject.GetAsync(this.DEVICE_ID);
+
+            // Assert
+            act.Should().NotBeNull();
+            act.Should().BeOfType(typeof(Device));
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetAsync(this.DEVICE_ID))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.GetAsync(this.DEVICE_ID);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
         }
     }
 }
