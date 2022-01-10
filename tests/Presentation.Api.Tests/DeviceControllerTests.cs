@@ -99,33 +99,37 @@ namespace DeviceApi.Presentation.Api.Tests
         public async Task GetAllAsync_DefaultBehaviour_ShouldReturnDeviceList()
         {
             // Arrange
+            var deviceFiltersMock = new DeviceFilters();
+
             this.deviceServiceMock
-                .Setup(x => x.GetAllAsync())
+                .Setup(x => x.GetAllAsync(It.IsAny<DeviceFilters>()))
                 .ReturnsAsync(new List<Device>());
 
             // Act
-            var act = await this.Subject.GetAllAsync();
+            var act = await this.Subject.GetAllAsync(deviceFiltersMock);
 
             // Assert
             act.Should().BeOfType(typeof(OkObjectResult));
-            this.deviceServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            this.deviceServiceMock.Verify(x => x.GetAllAsync(deviceFiltersMock), Times.Once);
         }
 
         [Fact]
         public async Task GetAllAsync_WhenDeviceServiceThrowsException_ShouldThrowExcception()
         {
             // Arrange
+            var deviceFiltersMock = new DeviceFilters();
+
             this.deviceServiceMock
-                .Setup(x => x.GetAllAsync())
+                .Setup(x => x.GetAllAsync(It.IsAny<DeviceFilters>()))
                 .ThrowsAsync(new Exception());
 
             // Act
-            Func<Task> act = async () => await this.Subject.GetAllAsync();
+            Func<Task> act = async () => await this.Subject.GetAllAsync(deviceFiltersMock);
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
 
-            this.deviceServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
+            this.deviceServiceMock.Verify(x => x.GetAllAsync(deviceFiltersMock), Times.Once);
         }
 
         [Fact]

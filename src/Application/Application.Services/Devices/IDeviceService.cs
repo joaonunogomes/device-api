@@ -12,7 +12,7 @@ namespace DeviceApi.Application.Services.Devices
 
         Task<Device> GetAsync(Guid id);
 
-        Task<IEnumerable<Device>> GetAllAsync();
+        Task<IEnumerable<Device>> GetAllAsync(DeviceFilters filters);
 
         Task UpdateAsync(Guid id, Device deviceToUpdate);
 

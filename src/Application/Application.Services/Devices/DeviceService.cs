@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainModel = DeviceApi.Domain.Model;
 
@@ -40,9 +41,19 @@ namespace DeviceApi.Application.Services.Devices
             return MappingProfile.Map<DomainModel.Device, Device>(await this.deviceRepository.GetAsync(id));
         }
 
-        public async Task<IEnumerable<Device>> GetAllAsync()
+        public async Task<IEnumerable<Device>> GetAllAsync(DeviceFilters filters)
         {
-            var deviceList = MappingProfile.Map<IEnumerable<DomainModel.Device>, IEnumerable<Device>>(await this.deviceRepository.GetManyAsync(x => true));
+            IEnumerable<Device> deviceList;
+
+            if (filters.BrandId == Guid.Empty)
+            {
+                deviceList = MappingProfile.Map<IEnumerable<DomainModel.Device>, IEnumerable<Device>>(await this.deviceRepository.GetManyAsync(x => true));
+            }
+            else
+            {
+                deviceList = MappingProfile.Map<IEnumerable<DomainModel.Device>, IEnumerable<Device>>(await this.deviceRepository.GetManyAsync(x => x.BrandId == filters.BrandId));
+            }
+
             return deviceList ?? new List<Device>();
         }
 

@@ -73,9 +73,9 @@ namespace DeviceApi.Presentation.Api.Controllers
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Device>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] DeviceFilters filters)
         {
-            return this.Ok(await this.deviceService.GetAllAsync());
+            return this.Ok(await this.deviceService.GetAllAsync(filters));
         }
 
         /// <summary>

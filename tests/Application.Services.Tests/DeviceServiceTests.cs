@@ -106,13 +106,31 @@ namespace DeviceApi.Application.Services.Tests
                 .ReturnsAsync(new List<DomainModel.Device> { new DomainModel.Device() });
 
             // Act
-            var act = await this.Subject.GetAllAsync();
+            var act = await this.Subject.GetAllAsync(new DeviceFilters());
 
             // Assert
             act.Should().NotBeNull();
             act.Should().NotBeEmpty();
             act.Should().BeOfType(typeof(List<Device>));
             this.deviceRepositoryMock.Verify(x => x.GetManyAsync(It.Is<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(x => true)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllAsync_WhenFiltersContainsBrandId_ShouldReturnDeviceList()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>()))
+                .ReturnsAsync(new List<DomainModel.Device> { new DomainModel.Device() });
+
+            // Act
+            var act = await this.Subject.GetAllAsync(new DeviceFilters { BrandId = Guid.NewGuid() });
+
+            // Assert
+            act.Should().NotBeNull();
+            act.Should().NotBeEmpty();
+            act.Should().BeOfType(typeof(List<Device>));
+            this.deviceRepositoryMock.Verify(x => x.GetManyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>()), Times.Once);
         }
 
         [Fact]
@@ -124,7 +142,7 @@ namespace DeviceApi.Application.Services.Tests
                 .ReturnsAsync(null as List<DomainModel.Device>);
 
             // Act
-            var act = await this.Subject.GetAllAsync();
+            var act = await this.Subject.GetAllAsync(new DeviceFilters());
 
             // Assert
             act.Should().NotBeNull();
@@ -142,7 +160,7 @@ namespace DeviceApi.Application.Services.Tests
                 .ThrowsAsync(new Exception());
 
             // Act
-            Func<Task> act = async () => await this.Subject.GetAllAsync();
+            Func<Task> act = async () => await this.Subject.GetAllAsync(new DeviceFilters());
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
