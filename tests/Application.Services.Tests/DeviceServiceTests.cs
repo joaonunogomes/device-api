@@ -93,5 +93,59 @@ namespace DeviceApi.Application.Services.Tests
             await act.Should().ThrowAsync<Exception>();
             this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
         }
+
+        [Fact]
+        public async Task UpdateAsync_DefaultBehaviour_ShouldUpdateDevice()
+        {
+            // Arrange
+            var device = new Device();
+
+            this.deviceRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            await this.Subject.UpdateAsync(this.DEVICE_ID, device);
+
+            // Assert
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID)), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WhenDeviceIsNull_ShouldThrowException()
+        {
+            // Arrange
+
+            // Act
+            Func<Task> act = async () => await this.Subject.UpdateAsync(this.DEVICE_ID, null);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.IsAny<DomainModel.Device>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WhenRepositoryThrowsException_ShouldThrowException()
+        {
+            // Arrange
+            var device = new Device();
+
+            this.deviceRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(), It.IsAny<DomainModel.Device>()))
+                .ThrowsAsync(new Exception());
+
+            // Act
+            Func<Task> act = async () => await this.Subject.UpdateAsync(this.DEVICE_ID, device);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>();
+            this.deviceRepositoryMock.Verify(x => x.UpdateAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<DomainModel.Device, bool>>>(),
+                It.Is<DomainModel.Device>(x => x.Id == this.DEVICE_ID)), Times.Once);
+        }
     }
 }

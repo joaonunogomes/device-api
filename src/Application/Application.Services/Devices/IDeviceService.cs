@@ -9,5 +9,7 @@ namespace DeviceApi.Application.Services.Devices
         Task<Device> CreateAsync(Device device);
 
         Task<Device> GetAsync(Guid id);
+
+        Task UpdateAsync(Guid id, Device deviceToUpdate);
     }
 }

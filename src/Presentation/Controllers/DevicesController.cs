@@ -25,6 +25,17 @@ namespace DeviceApi.Presentation.Api.Controllers
         /// <summary>
         /// Creates a new device
         /// </summary>
+        /// <remarks>
+        /// __________________________________________________________
+        /// <example>
+        /// Sample request:
+        ///     {
+        ///         "Name": "OnePlus 6T",
+        ///         "brandId": "85501265-0ed0-41a8-8295-0bec9788a4ba",
+        ///         "creationDate": "2022-01-10T13:44:51.643Z"
+        ///     }
+        /// </example>
+        /// </remarks>
         /// <param name="device">The device to be created.</param>
         [HttpPost]
         [Produces("application/json")]
@@ -68,6 +79,44 @@ namespace DeviceApi.Presentation.Api.Controllers
             {
                 var errorMessage = "Couldn't get device";
                 this.logger.Error(errorMessage, new { DeviceId = id }, ex);
+
+                return BadRequest(errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// Update a device
+        /// </summary>
+        /// <remarks>
+        /// __________________________________________________________
+        /// <example>
+        /// Sample request:
+        ///     {
+        ///         "Name": "OnePlus 6T",
+        ///         "brandId": "85501265-0ed0-41a8-8295-0bec9788a4ba",
+        ///         "creationDate": "2022-01-10T13:44:51.643Z"
+        ///     }
+        /// </example>
+        /// </remarks>
+        /// <param name="id">Universal identifier of the device.</param>
+        /// <param name="device">The device to be updated.</param>
+        [HttpPut]
+        [Route("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(Device))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutAsync([FromRoute] Guid id, Device device)
+        {
+            try
+            {
+                await this.deviceService.UpdateAsync(id, device);
+
+                return this.NoContent();
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = "Couldn't update device";
+                this.logger.Error(errorMessage, device, ex);
 
                 return BadRequest(errorMessage);
             }
