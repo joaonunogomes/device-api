@@ -30,9 +30,17 @@ This service contains two resources:
 
 Since the main goal of the exercise was to manage devices, Brands resource was created only to have a brand associated to a specific device, because of that, the CRUD operations of Brands resource are not complete.
 
-## Postman
+## Integration tests
 
-A postman collection with some happy path tests was create and is available inside `./postman`
+A postman collection with some happy path tests was create and is available inside `./postman`.
+
+### How to run
+
+To run postman test, newman command line tool can be used as shown bellow:
+
+```
+newman run ./postman/Devices.postman_collection.json -e Test.postman_environment.json --verbos
+```
 
 # How to run
 
