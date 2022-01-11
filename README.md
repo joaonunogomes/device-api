@@ -8,11 +8,16 @@ The structure of this project follows Domain Driven Design patterns, devided int
 
 ## Layers
 
-- Presentation -> responsible by exposing the servise to the clients
-- Application -> Contains Data Tranfer Object that will be retruned to the client and used by the client to do requests to this service
-- Domain -> Contains all business/data models
-- Data -> Contains all database access implementations
-- Infrastructure Crosscutting -> Contaisn helpers, extensions and other tools, that should be accessible by all other projects.
+This architecture relies on the Dependency Inversion Principle. The Presentation Layer communicates to Application Layer through interfaces, and so on.
+It has four layers and a common crosscutting extra layer, as shown in next figure.
+
+![dependency-layer-diagram](https://github.com/joaonunogomes/device-api/blob/main/documentation/onion.png)
+
+- Presentation -> responsible by exposing the service to the clients
+- Application -> Contains Data Tranfer Objects that will be returned to the client and used by the client to do requests to this service. Also here is where we try to coordinate the lower level layers, like a facade.
+- Domain Model -> Contains all business/data models
+- Data Repository -> Contains all database access implementations and interfaces.
+- Infrastructure Crosscutting -> Contains helpers, extensions and other tools, that should be accessible by all layers.
 
 ![dependency-layer-diagram](https://github.com/joaonunogomes/device-api/blob/main/documentation/dependency-layer-diagram.png)
 
