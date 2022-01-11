@@ -21,11 +21,6 @@ COPY --from=build /src .
 COPY --from=build /root/.nuget /root/.nuget
 RUN dotnet test DeviceApi.sln
 
-# Integration Tests
-# FROM postman/newman as newman
-# COPY postman ./postman
-# RUN newman run ./postman/Devices.postman_collection.json -e ./postman/PullRequest.postman_environment.json
-
 # Run api
 FROM base AS final
 ARG RUN_ENV="Development"
