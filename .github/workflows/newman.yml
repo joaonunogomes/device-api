@@ -13,7 +13,7 @@ jobs:
       id: wait-for-build
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        checkName: Google Cloud Build
+        checkName: device-api-pr (axial-coyote-309217)
         ref: ${{ github.event.pull_request.head.sha || github.sha }}
     - uses: actions/checkout@master
     - uses: matt-ball/newman-action@master
