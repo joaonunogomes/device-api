@@ -39,7 +39,7 @@ A postman collection with some happy path tests was create and is available insi
 To run postman test, newman command line tool can be used as shown bellow:
 
 ```
-newman run ./postman/Devices.postman_collection.json -e Test.postman_environment.json --verbos
+newman run ./postman/Devices.postman_collection.json -e ./postman/Test.postman_environment.json
 ```
 
 # How to run
