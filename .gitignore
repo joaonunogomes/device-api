@@ -47,3 +47,5 @@ device-api/
 
 #mongo
 /mongo_data
+
+/exercise
