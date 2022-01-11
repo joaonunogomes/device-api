@@ -4,10 +4,17 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-jobs:
+jobs:  
   newman:
     runs-on: ubuntu-latest
     steps:
+    - name: Wait for build and deploy to succeed
+      uses: fountainhead/action-wait-for-check@v1.0.0
+      id: wait-for-build
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        checkName: Google Cloud Build
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
     - uses: actions/checkout@master
     - uses: matt-ball/newman-action@master
       with:
