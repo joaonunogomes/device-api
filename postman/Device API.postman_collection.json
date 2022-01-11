@@ -1,0 +1,353 @@
+{
+	"info": {
+		"_postman_id": "8f26bd4b-be23-461e-bb3f-83d33588b5e2",
+		"name": "Device API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Brands",
+			"item": [
+				{
+					"name": "Get brands",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response body is valid\", function () {\r",
+									"    var data = JSON.parse(responseBody);\r",
+									"    pm.expect(data).not.equal(undefined);\r",
+									"    pm.expect(data.length >= 0).to.be.true;\r",
+									"\r",
+									"    if (data.length > 0) {\r",
+									"        postman.setEnvironmentVariable(\"brandId\", data[0].id);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/brands",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post brand",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid\", function () {\r",
+									"    var data = JSON.parse(responseBody);\r",
+									"    pm.expect(data.id).not.equal(undefined);\r",
+									"    pm.expect(data.name).not.equal(undefined);\r",
+									"    pm.expect(data.creationdate).not.equal(undefined);\r",
+									"\r",
+									"    pm.expect(data.name).equal(pm.environment.get(\"brandName\"));\r",
+									"\r",
+									"    postman.setEnvironmentVariable(\"brandId\", data.id);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Samsung\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/brands",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Devices",
+			"item": [
+				{
+					"name": "Get devices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response body is valid\", function () {\r",
+									"    var data = JSON.parse(responseBody);\r",
+									"    pm.expect(data).not.equal(undefined);\r",
+									"    pm.expect(data.length >= 0).to.be.true;\r",
+									"\r",
+									"    if (data.length > 0) {\r",
+									"        postman.setEnvironmentVariable(\"deviceId\", data[0].id);\r",
+									"        postman.setEnvironmentVariable(\"brandId\", data[0].brandId);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/devices",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response body is valid\", function () {\r",
+									"    var data = JSON.parse(responseBody);\r",
+									"    pm.expect(data).not.equal(undefined);\r",
+									"    pm.expect(data.length).to.be.above(-1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/devices/{{deviceId}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/devices/{{deviceId}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is valid\", function () {\r",
+									"    var data = JSON.parse(responseBody);\r",
+									"    pm.expect(data).not.equal(undefined);\r",
+									"    pm.expect(data.id).not.equal(undefined);\r",
+									"    pm.expect(data.creationDate).not.equal(undefined);\r",
+									"    pm.expect(data.name).not.equal(undefined);\r",
+									"    pm.expect(data.brandId).equal(pm.environment.get(\"brandId\"));\r",
+									"\r",
+									"    postman.setEnvironmentVariable(\"deviceId\", data.id);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"brandId\": \"{{brandId}}\",\r\n  \"name\": \"IPHONE 12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/devices",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"brandId\": \"{{brandId}}\",\r\n  \"name\": \"IPHON E 12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/devices/{{deviceId}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch a device",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"op\": \"replace\",\r\n        \"path\": \"/name\",\r\n        \"value\": \"IPHONE 14\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/devices/{{deviceId}}",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"devices",
+								"{{deviceId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

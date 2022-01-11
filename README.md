@@ -21,11 +21,38 @@ It has four layers and a common crosscutting extra layer, as shown in next figur
 
 ![dependency-layer-diagram](https://github.com/joaonunogomes/device-api/blob/main/documentation/dependency-layer-diagram.png)
 
+## Implementation notes
+
+This service contains two resources:
+
+1. Devices
+2. Brands
+
+Since the main goal of the exercise was to manage devices, Brands resource was created only to have a brand associated to a specific device, because of that, the CRUD operations of Brands resource are not complete.
+
+## Postman
+
+A postman collection with some happy path tests was create and is available inside `./postman`
+
 # How to run
 
-### Port
+## Testing environment
 
-This service will listen on port `9199`.
+In order to help testing this service, a testing environment was created using _Google Cloud Run_ serverless deployment and _Mongo Atlas_ free tier cluster.
+
+Due to the nature of this exercice, the service domain is public and no authorization strategies were applied, but the thresholds of the servers are very low, so a lot of concurrent requests will shutdown the service.
+
+The service is available at:
+
+```
+https://device-api-tmi2mv3z7a-ew.a.run.app/swagger/index.html
+```
+
+Example of a request path to this endpoint (get all devices):
+
+```
+https://device-api-tmi2mv3z7a-ew.a.run.app/devices
+```
 
 ## With docker
 
@@ -51,3 +78,5 @@ To run this project with Visual Studio follow the follwing steps:
     - If you want to use the provided mongodb run the follwogin command on the root folder of the project: `docker-compose -f "docker-compose.yml" up -d --build mongodb` (this will start a mongodb dockerized instance)
     - If you want to use a custom mongodb instance, set the connection string on `appsettings.json`
 3.  Click on the green play button and the project should build and start running
+
+_Port_: If running with docker or Visual Studio, this service will listen on port `9199`.
