@@ -82,6 +82,22 @@ namespace DeviceApi.Application.Services.Tests
         }
 
         [Fact]
+        public async Task GetAsync_WhenDeviceDoesNotExist_ShouldThrowNotFoundException()
+        {
+            // Arrange
+            this.deviceRepositoryMock
+                .Setup(x => x.GetAsync(this.DEVICE_ID))
+                .ReturnsAsync(null as DomainModel.Device);
+
+            // Act
+            Func<Task> act = async () => await this.Subject.GetAsync(this.DEVICE_ID);
+
+            // Assert
+            await act.Should().ThrowAsync<NotFoundException>();
+            this.deviceRepositoryMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
+        }
+
+        [Fact]
         public async Task GetAsync_WhenRepositoryThrowsException_ShouldThrowException()
         {
             // Arrange
@@ -171,8 +187,8 @@ namespace DeviceApi.Application.Services.Tests
         public async Task UpdateAsync_DefaultBehaviour_ShouldUpdateDevice()
         {
             // Arrange
-            var deviceToUpdate = new Device 
-            { 
+            var deviceToUpdate = new Device
+            {
                 Id = Guid.NewGuid(),
                 CreationDate = DateTime.UtcNow.AddDays(10),
                 Name = "IPhone 20",
@@ -327,7 +343,7 @@ namespace DeviceApi.Application.Services.Tests
         {
             // Arrange
             var jsonPatchDocument = null as JsonPatchDocument<Device>;
-            
+
             // Act
             Func<Task> act = async () => await this.Subject.PatchAsync(this.DEVICE_ID, jsonPatchDocument);
 

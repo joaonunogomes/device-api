@@ -38,7 +38,9 @@ namespace DeviceApi.Application.Services.Devices
 
         public async Task<Device> GetAsync(Guid id)
         {
-            return MappingProfile.Map<DomainModel.Device, Device>(await this.deviceRepository.GetAsync(id));
+            var device = await TryGetDevice(id);
+
+            return MappingProfile.Map<DomainModel.Device, Device>(device);
         }
 
         public async Task<IEnumerable<Device>> GetAllAsync(DeviceFilters filters)
