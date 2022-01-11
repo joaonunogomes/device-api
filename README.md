@@ -42,6 +42,21 @@ To run postman test, newman command line tool can be used as shown bellow:
 newman run ./postman/Devices.postman_collection.json -e ./postman/Test.postman_environment.json
 ```
 
+### Pull Request
+
+Every pull request will run the following actions:
+
+1. Docker build + unit test run
+2. Deploy to google cloud run specific PR environment
+3. When steps 1 and 2 finish, run Newman test collection targeting the recent deploy on cloud run PR environment
+
+#### **Notes**
+
+- Steps 1 and 2 are possible due to Google Cloud Build integration with Github
+- Step 3 is possibel using the following Github actions available on Github marketplace:
+  - https://github.com/marketplace/actions/newman-action
+  - https://github.com/marketplace/actions/wait-for-check
+
 # How to run
 
 ## Testing environment
@@ -71,7 +86,9 @@ To do so, open a terminal and go to the project root folder. Once there, just ex
 docker-compose -f "docker-compose.yml" up -d --build
 ```
 
-_NOTE: ensure that ports `9199` and `27017` are free on the server you will run this project._
+### **Notes**
+
+Ensure that ports `9199` and `27017` are free on the server you will run this project.\_
 
 ### Custom configuration
 
@@ -87,4 +104,6 @@ To run this project with Visual Studio follow the follwing steps:
     - If you want to use a custom mongodb instance, set the connection string on `appsettings.json`
 3.  Click on the green play button and the project should build and start running
 
-_Port_: If running with docker or Visual Studio, this service will listen on port `9199`.
+### **Port**
+
+If running with docker or Visual Studio, this service will listen on port `9199`.
