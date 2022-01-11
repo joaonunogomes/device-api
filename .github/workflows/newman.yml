@@ -1,0 +1,15 @@
+- name: Newman Action
+  on:
+    push:
+      branches: [ main ]
+    pull_request:
+      branches: [ main ]
+  jobs:
+    newman:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: matt-ball/newman-action@master
+      with:
+        collection: ./postman/Devices.postman_collection.json
+        environment: ./postman/PullRequest.postman_environment.json
