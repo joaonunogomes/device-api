@@ -11,6 +11,16 @@ RUN dotnet restore DeviceApi.sln
 RUN mkdir - p /app
 RUN dotnet publish "src/Presentation/Presentation.Api.csproj" -c Release -o /app --no-restore
 
+# Unit Tests
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS unit-tests
+USER root
+ENV ASPNETCORE_ENVIRONMENT "Development"
+WORKDIR /src
+RUN mkdir -p /test-results
+COPY --from=build /src .
+COPY --from=build /root/.nuget /root/.nuget
+RUN dotnet test DeviceApi.sln
+
 # Run api
 FROM base AS final
 ARG RUN_ENV="Development"
