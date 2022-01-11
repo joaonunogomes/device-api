@@ -11,13 +11,13 @@ namespace DeviceApi.Data.Repository
         public static IServiceCollection AddRepository(this IServiceCollection services, MongoSettings settings)
         {
             return services
-                .AddTransient<IMongoContext>(provider =>
+                .AddSingleton<IMongoContext>(provider =>
                     new MongoContext(
                         settings.MongoConnectionString,
                         settings.MongoDataBase))
-                .AddTransient<IUnitOfWork, UnitOfWork>()
-                .AddScoped<IDeviceRepository, DeviceRepository>()
-                .AddTransient<IBrandRepository, BrandRepository>(); ;
+                .AddSingleton<IUnitOfWork, UnitOfWork>()
+                .AddTransient<IDeviceRepository, DeviceRepository>()
+                .AddTransient<IBrandRepository, BrandRepository>();
         }
     }
 }
