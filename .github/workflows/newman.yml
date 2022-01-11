@@ -1,11 +1,11 @@
-- name: Newman Action
-  on:
-    push:
-      branches: [ main ]
-    pull_request:
-      branches: [ main ]
-  jobs:
-    newman:
+name: Newman
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  newman:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
