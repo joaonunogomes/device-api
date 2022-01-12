@@ -52,10 +52,5 @@ namespace DeviceApi.Data.Repository.Generics
         {
             await this.collection.ReplaceOneAsync(query, obj);
         }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }
