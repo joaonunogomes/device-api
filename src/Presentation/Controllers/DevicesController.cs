@@ -1,5 +1,6 @@
 ﻿using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Devices;
+using DeviceApi.Infrastructure.CrossCutting.Exceptions;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
@@ -42,7 +43,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Device))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> PostAsync([FromBody] Device device)
         {
             var createdDevice = await this.deviceService.CreateAsync(device);
@@ -60,7 +61,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [Route("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Device))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> GetAsync([FromRoute] Guid id)
         {
             return this.Ok(await this.deviceService.GetAsync(id));
@@ -72,7 +73,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Device>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> GetAllAsync([FromQuery] DeviceFilters filters)
         {
             return this.Ok(await this.deviceService.GetAllAsync(filters));
@@ -98,7 +99,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [Route("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> PutAsync([FromRoute] Guid id, Device device)
         {
             await this.deviceService.UpdateAsync(id, device);
@@ -126,7 +127,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [Route("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> PatchAsync([FromRoute] Guid id, JsonPatchDocument<Device> jsonPatchDocument)
         {
             await this.deviceService.PatchAsync(id, jsonPatchDocument);
@@ -142,7 +143,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [Route("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
             await this.deviceService.DeleteAsync(id);

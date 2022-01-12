@@ -41,8 +41,11 @@ namespace DeviceApi.Presentation.Api
                 .AddControllers()
                 .AddNewtonsoftJson(options =>
                 {
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.Formatting = Formatting.Indented;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
 

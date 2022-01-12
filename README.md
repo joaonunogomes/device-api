@@ -30,9 +30,9 @@ It has four layers and a common crosscutting extra layer, as shown in next figur
 
 ![dependency-layer-diagram](https://github.com/joaonunogomes/device-api/blob/main/documentation/dependency-layer-diagram.png)
 
-- Presentation -> responsible by exposing the service to the clients
-- Application -> Contains Data Tranfer Objects that will be returned to the client and used by the client to do requests to this service. Also here is where we try to coordinate the lower level layers, like a facade.
-- Domain Model -> Contains all business/data models
+- Presentation -> responsible by exposing the service to the clients.
+- Application -> Contains Data Tranfer Objects that will be returned to and used by the client to do requests to this service. Also here is where the lower level layers are coordinated, like a facade.
+- Domain Model -> Contains all business/data models.
 - Data Repository -> Contains all database access implementations and interfaces.
 - Infrastructure Crosscutting -> Contains helpers, extensions and other tools, that should be accessible by all layers.
 

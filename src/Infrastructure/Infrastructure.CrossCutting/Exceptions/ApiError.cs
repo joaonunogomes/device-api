@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace DeviceApi.Infrastructure.CrossCutting.Exceptions
 {
@@ -10,7 +11,12 @@ namespace DeviceApi.Infrastructure.CrossCutting.Exceptions
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(
+                this, 
+                new JsonSerializerSettings 
+                { 
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
         }
     }
 }
