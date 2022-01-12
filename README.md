@@ -1,6 +1,23 @@
 # Device API
 
-REST API service that supports the management of a device database.
+REST API service that supports the management of a smartphone device database.
+
+## Represented entities
+
+Device
+
+- Device name
+- Device brand
+- Creation time
+
+## Supported operations
+
+1. Add device
+2. Get device by identifier
+3. List all devices
+4. Update device (full and partial)
+5. Delete a device
+6. Search device by brand
 
 # Project Structure
 
@@ -69,7 +86,7 @@ docker-compose -f "docker-compose.yml" up -d --build
 
 ### **Notes**
 
-Ensure that ports `9199` and `27017` are free on the server you will run this project.\_
+Ensure that ports `9199` and `27017` are free on the server you will run this project.
 
 ### Custom configuration
 

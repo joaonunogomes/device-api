@@ -2,6 +2,7 @@
 using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Devices;
 using DeviceApi.Presentation.Api.Controllers;
+using DeviceApi.Presentation.Api.Tests.Extensions;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -31,18 +32,24 @@ namespace DeviceApi.Presentation.Api.Tests
         public async Task PostAsync_DefaultBehaviour_ShouldReturnCreatedDevice()
         {
             // Arrange
-            var deviceMock = new Device();
+            var deviceMock = new Device
+            {
+                Id = this.DEVICE_ID
+            };
 
             this.deviceServiceMock
                 .Setup(x => x.CreateAsync(It.IsAny<Device>()))
-                .ReturnsAsync(new Device());
+                .ReturnsAsync(deviceMock);
 
             // Act
-            var act = await this.Subject.PostAsync(deviceMock);
+            var act = await this.Subject.PostAsync(new Device());
 
             // Assert
             act.Should().BeOfType(typeof(CreatedAtActionResult));
-            this.deviceServiceMock.Verify(x => x.CreateAsync(deviceMock), Times.Once);
+            var result = act.GetValueFromCreatedAtActionResult<Device>();
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(deviceMock);
+            this.deviceServiceMock.Verify(x => x.CreateAsync(It.IsAny<Device>()), Times.Once);
         }
 
         [Fact]
@@ -67,15 +74,23 @@ namespace DeviceApi.Presentation.Api.Tests
         public async Task GetAsync_DefaultBehaviour_ShouldReturnDevice()
         {
             // Arrange
+            var deviceMock = new Device 
+            { 
+                Id = this.DEVICE_ID 
+            };
+
             this.deviceServiceMock
                 .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new Device { Id = this.DEVICE_ID });
+                .ReturnsAsync(deviceMock);
 
             // Act
             var act = await this.Subject.GetAsync(this.DEVICE_ID);
 
             // Assert
             act.Should().BeOfType(typeof(OkObjectResult));
+            var result = act.GetValueFromOkObjectResult<Device>();
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(deviceMock);
             this.deviceServiceMock.Verify(x => x.GetAsync(this.DEVICE_ID), Times.Once);
         }
 
@@ -100,16 +115,26 @@ namespace DeviceApi.Presentation.Api.Tests
         {
             // Arrange
             var deviceFiltersMock = new DeviceFilters();
+            var deviceListMock = new List<Device>
+            {
+                new Device
+                {
+                    Id = this.DEVICE_ID
+                }
+            };
 
             this.deviceServiceMock
                 .Setup(x => x.GetAllAsync(It.IsAny<DeviceFilters>()))
-                .ReturnsAsync(new List<Device>());
+                .ReturnsAsync(deviceListMock);
 
             // Act
             var act = await this.Subject.GetAllAsync(deviceFiltersMock);
 
             // Assert
             act.Should().BeOfType(typeof(OkObjectResult));
+            var result = act.GetValueFromOkObjectResult<List<Device>>();
+            result.Should().NotBeNullOrEmpty();
+            result.Should().BeSameAs(deviceListMock);
             this.deviceServiceMock.Verify(x => x.GetAllAsync(deviceFiltersMock), Times.Once);
         }
 

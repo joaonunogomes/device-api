@@ -2,6 +2,7 @@
 using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Brands;
 using DeviceApi.Presentation.Api.Controllers;
+using DeviceApi.Presentation.Api.Tests.Extensions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,18 +31,24 @@ namespace DeviceApi.Presentation.Api.Tests
         public async Task PostAsync_DefaultBehaviour_ShouldReturnCreatedBrand()
         {
             // Arrange
-            var brandMock = new Brand();
+            var brandMock = new Brand
+            {
+                Id = this.BRAND_ID
+            };
 
             this.brandServiceMock
                 .Setup(x => x.CreateAsync(It.IsAny<Brand>()))
-                .ReturnsAsync(new Brand());
+                .ReturnsAsync(brandMock);
 
             // Act
-            var act = await this.Subject.PostAsync(brandMock);
+            var act = await this.Subject.PostAsync(new Brand());
 
             // Assert
             act.Should().BeOfType(typeof(CreatedAtActionResult));
-            this.brandServiceMock.Verify(x => x.CreateAsync(brandMock), Times.Once);
+            var result = act.GetValueFromCreatedAtActionResult<Brand>();
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(brandMock);
+            this.brandServiceMock.Verify(x => x.CreateAsync(It.IsAny<Brand>()), Times.Once);
         }
 
         [Fact]
@@ -66,15 +73,26 @@ namespace DeviceApi.Presentation.Api.Tests
         public async Task GetAllAsync_DefaultBehaviour_ShouldReturnDeviceList()
         {
             // Arrange
+            var brandListMock = new List<Brand>
+            {
+                new Brand
+                {
+                    Id = this.BRAND_ID
+                }
+            };
+
             this.brandServiceMock
                 .Setup(x => x.GetAllAsync())
-                .ReturnsAsync(new List<Brand>());
+                .ReturnsAsync(brandListMock);
 
             // Act
             var act = await this.Subject.GetAllAsync();
 
             // Assert
             act.Should().BeOfType(typeof(OkObjectResult));
+            var result = act.GetValueFromOkObjectResult<List<Brand>>();
+            result.Should().NotBeNullOrEmpty();
+            result.Should().BeSameAs(brandListMock);
             this.brandServiceMock.Verify(x => x.GetAllAsync(), Times.Once);
         }
 
