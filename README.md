@@ -4,7 +4,7 @@ REST API service that supports the management of a device database.
 
 # Project Structure
 
-The structure of this project follows Domain Driven Design patterns, devided into several layers, each where each one will sever its own responsability.
+The structure of this project follows Domain Driven Design patterns, devided into several layers, each one of them will sever its own responsability.
 
 ## Layers
 
@@ -30,30 +30,13 @@ Since the main goal of the exercise was to manage devices, Brands resource was c
 
 ## Integration tests
 
-A postman collection with some happy path tests was create and is available inside `./postman`.
+A postman collection with some happy path tests was created and is available inside `./postman`.
 
-### How to run
-
-To run postman test, newman command line tool can be used as shown bellow:
+To run postman tests, the newman command line tool can be used as shown bellow:
 
 ```
 newman run ./postman/Devices.postman_collection.json -e ./postman/Test.postman_environment.json
 ```
-
-### Pull Request
-
-Every pull request will run the following actions:
-
-1. Docker build + unit test run
-2. Deploy to google cloud run specific PR environment
-3. When steps 1 and 2 finish, run Newman test collection targeting the recent deploy on cloud run PR environment
-
-#### **Notes**
-
-- Steps 1 and 2 are possible due to Google Cloud Build integration with Github
-- Step 3 is possibel using the following Github actions available on Github marketplace:
-  - https://github.com/marketplace/actions/newman-action
-  - https://github.com/marketplace/actions/wait-for-check
 
 # How to run
 
@@ -105,3 +88,18 @@ To run this project with Visual Studio follow the follwing steps:
 ### **Port**
 
 If running with docker or Visual Studio, this service will listen on port `9199`.
+
+# Pull Requests
+
+Every pull request will run the following actions:
+
+1. Docker build + unit test run
+2. Deploy to google cloud run specific PR environment
+3. When steps 1 and 2 finish, run Newman test collection targeting the recent deploy on cloud run PR environment
+
+#### **Notes**
+
+- Steps 1 and 2 are possible due to Google Cloud Build integration with Github
+- Step 3 is possibel using the following Github actions available on Github marketplace:
+  - https://github.com/marketplace/actions/newman-action
+  - https://github.com/marketplace/actions/wait-for-check
