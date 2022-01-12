@@ -1,10 +1,10 @@
 ﻿using DeviceApi.Application.Dto;
 using DeviceApi.Application.Services.Brands;
+using DeviceApi.Infrastructure.CrossCutting.Exceptions;
 using DeviceApi.Infrastructure.CrossCutting.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -30,7 +30,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Brand))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> PostAsync([FromBody] Brand brand)
         {
             var createdBrand = await this.brandService.CreateAsync(brand);
@@ -46,7 +46,7 @@ namespace DeviceApi.Presentation.Api.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Brand>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiError))]
         public async Task<IActionResult> GetAllAsync()
         {
             return this.Ok(await this.brandService.GetAllAsync());
