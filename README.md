@@ -95,7 +95,7 @@ Every pull request will run the following actions:
 
 1. Docker build + unit test run
 2. Deploy to google cloud run specific PR environment
-3. When steps 1 and 2 finish, run Newman test collection targeting the recent deploy on cloud run PR environment
+3. When steps 1 and 2 finish, run Newman test collection targeting the previously deployed version on cloud run PR environment
 
 #### **Notes**
 
