@@ -55,6 +55,16 @@ To run postman tests, the newman command line tool can be used as shown bellow:
 newman run ./postman/Devices.postman_collection.json -e ./postman/Test.postman_environment.json
 ```
 
+#### **Notes**
+
+If you don't have newman command line tool installed, please run the following on terminal:
+
+```
+npm install -g newman
+```
+
+Reference: https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/
+
 # How to run
 
 ## Testing environment
