@@ -76,6 +76,14 @@ namespace DeviceApi.Presentation.Api
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", appSettings.Swagger.Title);
                 });
+
+                app.UseReDoc(c =>
+                {
+                    c.DocumentTitle = "Device API Documentation";
+                    c.SpecUrl = "/swagger/v1/swagger.json";
+                    c.RequiredPropsFirst();
+                    c.SortPropsAlphabetically();
+                });
             }
 
             app.UseApiExceptions();

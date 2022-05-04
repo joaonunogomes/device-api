@@ -2,6 +2,10 @@
 
 REST API service that supports the management of a smartphone device database.
 
+## API DOC:
+
+http://localhost:9199/api-docs/index.html
+
 ## Represented entities
 
 Device
